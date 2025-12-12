@@ -1,7 +1,12 @@
+import { LoadingService } from './../loading/loading.service';
 import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
-import {Course} from '../model/course';
-import {Observable} from 'rxjs';
-import {CoursesStore} from '../services/courses.store';
+import {Course, sortCoursesBySeqNo} from '../model/course';
+import {interval, noop, Observable, of, throwError, timer} from 'rxjs';
+import {catchError, delay, delayWhen, filter, finalize, map, retryWhen, shareReplay, tap} from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
+import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
+import {CourseDialogComponent} from '../course-dialog/course-dialog.component';
+import { CoursesService } from '../services/courses.service';
 
 
 @Component({
@@ -15,23 +20,33 @@ export class HomeComponent implements OnInit {
 
   beginnerCourses$: Observable<Course[]>;
 
-  advancedCourses$: Observable<Course[]>;
+  advancedCourses$:  Observable<Course[]>;
 
-  constructor(private coursesStore: CoursesStore) {
 
-  }
+
+  constructor(
+    private courseService:CoursesService,
+    private loadingService:LoadingService
+    ) { }
 
   ngOnInit() {
-      this.reloadCourses();
+
+      //this.loadingService.loadingOn();
+      const courses$ = this.courseService.loadAllCourses().pipe(map(courses => courses.sort(sortCoursesBySeqNo)));
+
+      const loadCourses$ =  this.loadingService.showLoaderUntilCompleted(courses$)
+
+      this.beginnerCourses$ = loadCourses$.pipe(map(courses => courses.filter(course => course.category == 'BEGINNER')));
+      this.advancedCourses$ = loadCourses$.pipe(map(courses => courses.filter(course => course.category == 'ADVANCED')));
+
+
+
   }
 
-  reloadCourses() {
 
-      this.beginnerCourses$ = this.coursesStore.filterByCategory("BEGINNER");
-
-      this.advancedCourses$ = this.coursesStore.filterByCategory("ADVANCED");
-  }
 
 }
+
+
 
 

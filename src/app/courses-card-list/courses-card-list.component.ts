@@ -19,9 +19,7 @@ export class CoursesCardListComponent implements OnInit {
   @Output()
   private coursesChanged = new EventEmitter();
 
-  constructor(private dialog: MatDialog) {
-
-  }
+  constructor(private dialog: MatDialog) { }
 
   ngOnInit() {
 
@@ -30,7 +28,6 @@ export class CoursesCardListComponent implements OnInit {
     editCourse(course: Course) {
 
         const dialogConfig = new MatDialogConfig();
-
         dialogConfig.disableClose = true;
         dialogConfig.autoFocus = true;
         dialogConfig.width = "400px";
@@ -43,7 +40,6 @@ export class CoursesCardListComponent implements OnInit {
             .pipe(
                 filter(val => !!val),
                 tap(() => this.coursesChanged.emit())
-
             )
             .subscribe();
 

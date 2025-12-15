@@ -1,3 +1,5 @@
+import { CoursesStore } from './../services/courses.store';
+import { MessagesService } from './../messages/messages.service';
 import { LoadingService } from './../loading/loading.service';
 import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {Course, sortCoursesBySeqNo} from '../model/course';
@@ -26,24 +28,36 @@ export class HomeComponent implements OnInit {
 
   constructor(
     private courseService:CoursesService,
-    private loadingService:LoadingService
-    ) { }
+    private coursesStore:CoursesStore,
+    private loadingService:LoadingService,
+    private messagesService:MessagesService
+  ) { }
 
   ngOnInit() {
-
+    this.reloadCourses()
       //this.loadingService.loadingOn();
-      const courses$ = this.courseService.loadAllCourses().pipe(map(courses => courses.sort(sortCoursesBySeqNo)));
-
-      const loadCourses$ =  this.loadingService.showLoaderUntilCompleted(courses$)
-
-      this.beginnerCourses$ = loadCourses$.pipe(map(courses => courses.filter(course => course.category == 'BEGINNER')));
-      this.advancedCourses$ = loadCourses$.pipe(map(courses => courses.filter(course => course.category == 'ADVANCED')));
-
-
 
   }
 
+reloadCourses() {
 
+  this.beginnerCourses$ = this.coursesStore.filterByCategory('BEGINNER');
+  this.advancedCourses$ = this.coursesStore.filterByCategory('ADVANCED');
+
+
+     const courses$ = this.courseService.loadAllCourses().pipe(
+      map(courses => courses.sort(sortCoursesBySeqNo)),
+      catchError(err => {
+        this.messagesService.showErrors("Could not load courses");
+        return throwError(err);
+      }
+    ))
+
+      // const loadCourses$ =  this.loadingService.showLoaderUntilCompleted(courses$)
+
+      // this.beginnerCourses$ = loadCourses$.pipe(map(courses => courses.filter(course => course.category == 'BEGINNER')));
+      // this.advancedCourses$ = loadCourses$.pipe(map(courses => courses.filter(course => course.category == 'ADVANCED')));
+  }
 
 }
 

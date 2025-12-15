@@ -34,6 +34,7 @@ import {MessagesComponent} from './messages/messages.component';
 import {SearchLessonsComponent} from './search-lessons/search-lessons.component';
 import { LoadingComponent } from './loading/loading.component';
 import { CoursesCardListComponent } from './courses-card-list/courses-card-list.component';
+import { LoadingService } from './loading/loading.service';
 @NgModule({ declarations: [
         AppComponent,
         HomeComponent,
@@ -68,8 +69,10 @@ import { CoursesCardListComponent } from './courses-card-list/courses-card-list.
         MatSelectModule,
         MatDatepickerModule,
         MatMomentDateModule,
-        ReactiveFormsModule], providers: [
-        provideHttpClient(withInterceptorsFromDi())
+        ReactiveFormsModule],
+        providers: [
+            LoadingService,
+            provideHttpClient(withInterceptorsFromDi())
     ] })
 export class AppModule {
 }

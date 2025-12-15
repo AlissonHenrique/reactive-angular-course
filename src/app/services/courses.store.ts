@@ -20,9 +20,7 @@ export class CoursesStore {
         private http:HttpClient,
         private loading: LoadingService,
         private messages: MessagesService) {
-
         this.loadAllCourses();
-
     }
 
     private loadAllCourses() {

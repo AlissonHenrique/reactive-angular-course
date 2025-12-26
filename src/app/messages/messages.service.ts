@@ -3,7 +3,7 @@ import {BehaviorSubject, Observable} from 'rxjs';
 import {filter} from 'rxjs/operators';
 
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class MessagesService {
     private subject = new BehaviorSubject<string[]>([]);
     errors$: Observable<string[]> = this.subject.asObservable()
